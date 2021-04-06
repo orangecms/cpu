@@ -57,6 +57,7 @@ var (
 	// This is sometimes your only way to debug if there is (e.g.) a Go runtime
 	// bug around unsharing. Which has happened.
 	wtf  = flag.String("wtf", "", "Command to run if setup (e.g. private name space mounts) fail")
+	halp = flag.Bool("halp", false, "In case of despair...")
 	pid1 bool
 )
 
@@ -115,6 +116,7 @@ func runRemote(cmd, port9p string) error {
 		user = "nouser"
 	}
 
+	log.Println("-- mkdirall")
 	// It's true we are making this directory while still root.
 	// This ought to be safe as it is a private namespace mount.
 	for _, n := range []string{"/tmp/cpu", "/tmp/local", "/tmp/merge", "/tmp/root", "/home"} {
@@ -125,6 +127,7 @@ func runRemote(cmd, port9p string) error {
 	v("CPUD:namespace is %q", bindover)
 	var fail bool
 	if len(bindover) != 0 {
+		v("-- connect")
 		// Connect to the socket, return the nonce.
 		a := net.JoinHostPort("127.0.0.1", port9p)
 		v("CPUD:Dial %v", a)
@@ -157,7 +160,8 @@ func runRemote(cmd, port9p string) error {
 		}
 		v("CPUD: mount 127.0.0.1 on /tmp/cpu 9p %#x %s", flags, opts)
 		if err := unix.Mount("127.0.0.1", "/tmp/cpu", "9p", flags, opts); err != nil {
-			return fmt.Errorf("9p mount %v", err)
+			log.Printf("9p mount ERROR :( %v", err)
+			return fmt.Errorf("9p mount ERROR %v", err)
 		}
 		v("CPUD: mount done")
 
@@ -364,6 +368,10 @@ func handler(s ssh.Session) {
 }
 
 func doInit() error {
+	verbose("CPUD: ===== initializing =====")
+	if *halp {
+		verbose("CPUD: YOU ARE ABSOLUTELY DESPERATE")
+	}
 	if pid1 {
 		if err := cpuSetup(); err != nil {
 			log.Printf("CPUD:CPU setup error with cpu running as init: %v", err)
@@ -427,16 +435,20 @@ func doInit() error {
 	// we run that command after setting things up for it.
 	forwardHandler := &ssh.ForwardedTCPHandler{}
 	server := ssh.Server{
-		LocalPortForwardingCallback: ssh.LocalPortForwardingCallback(func(ctx ssh.Context, dhost string, dport uint32) bool {
-			log.Println("CPUD:Accepted forward", dhost, dport)
-			return true
-		}),
+		LocalPortForwardingCallback: ssh.LocalPortForwardingCallback(
+			func(ctx ssh.Context, dhost string, dport uint32) bool {
+				log.Println("CPUD:Accepted forward", dhost, dport)
+				return true
+			},
+		),
 		Addr:             ":" + *port,
 		PublicKeyHandler: publicKeyOption,
-		ReversePortForwardingCallback: ssh.ReversePortForwardingCallback(func(ctx ssh.Context, host string, port uint32) bool {
-			log.Println("CPUD:attempt to bind", host, port, "granted")
-			return true
-		}),
+		ReversePortForwardingCallback: ssh.ReversePortForwardingCallback(
+			func(ctx ssh.Context, host string, port uint32) bool {
+				log.Println("CPUD:attempt to bind", host, port, "granted")
+				return true
+			},
+		),
 		RequestHandlers: map[string]ssh.RequestHandler{
 			"tcpip-forward":        forwardHandler.HandleSSHRequest,
 			"cancel-tcpip-forward": forwardHandler.HandleSSHRequest,

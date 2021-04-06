@@ -84,5 +84,6 @@ func cpuDone(c chan uint) {
 	log.Printf("CPUD: All startup jobs exited")
 	log.Printf("CPUD: Syncing filesystems")
 	syscall.Sync()
+	log.Printf("CPUD: Syncing filesystems DONE")
 	c <- 1
 }
