@@ -16,7 +16,7 @@ require github.com/hashicorp/errwrap v1.0.0 // indirect
 
 require (
 	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
-	github.com/creack/pty v1.1.11 // indirect
+	github.com/creack/pty v1.1.15 // indirect
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/klauspost/compress v1.10.6 // indirect
 	github.com/klauspost/pgzip v1.2.4 // indirect
@@ -25,6 +25,7 @@ require (
 	github.com/ulikunitz/xz v0.5.8 // indirect
 	github.com/vishvananda/netlink v1.1.1-0.20211118161826-650dca95af54 // indirect
 	github.com/vishvananda/netns v0.0.0-20210104183010-2eb08e3e575f // indirect
-	golang.org/x/mod v0.5.1 // indirect
 	golang.org/x/tools v0.1.9 // indirect
 )
+
+replace github.com/u-root/u-root => ../u-root
