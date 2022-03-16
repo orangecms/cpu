@@ -9,7 +9,7 @@ require (
 	github.com/kr/pty v1.1.8
 	github.com/u-root/u-root v1.0.1
 	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3
-	golang.org/x/sys v0.0.0-20220223155357-96fed51e1446
+	golang.org/x/sys v0.0.0-20220310020820-b874c991c1a5
 )
 
 require github.com/hashicorp/errwrap v1.0.0 // indirect
