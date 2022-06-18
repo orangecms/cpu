@@ -25,7 +25,6 @@ require (
 	github.com/ulikunitz/xz v0.5.8 // indirect
 	github.com/vishvananda/netlink v1.1.1-0.20211118161826-650dca95af54 // indirect
 	github.com/vishvananda/netns v0.0.0-20210104183010-2eb08e3e575f // indirect
-	golang.org/x/tools v0.1.9 // indirect
 )
 
 replace github.com/u-root/u-root => ../u-root
